@@ -1,0 +1,429 @@
+import React, { useState, useEffect } from 'react';
+import { Type, Eye, Palette, Layout, CheckCircle, XCircle, ArrowRight, Play, RefreshCw, Monitor } from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('home');
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'home': return <Home navigate={setActiveTab} />;
+      case 'basics': return <Basics />;
+      case 'hierarchy': return <Hierarchy />;
+      case 'contrast': return <Contrast />;
+      case 'playground': return <Playground />;
+      default: return <Home navigate={setActiveTab} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
+      {/* Navbar */}
+      <nav className="bg-indigo-600 text-white shadow-lg sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-2 font-bold text-xl cursor-pointer" onClick={() => setActiveTab('home')}>
+              <Type className="w-8 h-8" />
+              <span className="hidden sm:inline">TypoMaster Siswa</span>
+            </div>
+            <div className="flex space-x-1 sm:space-x-4 overflow-x-auto">
+              <NavButton active={activeTab === 'basics'} onClick={() => setActiveTab('basics')} icon={<Type size={18} />} label="Dasar" />
+              <NavButton active={activeTab === 'hierarchy'} onClick={() => setActiveTab('hierarchy')} icon={<Layout size={18} />} label="Hierarki" />
+              <NavButton active={activeTab === 'contrast'} onClick={() => setActiveTab('contrast')} icon={<Palette size={18} />} label="Kontras" />
+              <NavButton active={activeTab === 'playground'} onClick={() => setActiveTab('playground')} icon={<Monitor size={18} />} label="Simulasi" />
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto px-4 py-8 min-h-[calc(100vh-4rem)]">
+        {renderContent()}
+      </main>
+      
+      {/* Footer */}
+      <footer className="bg-slate-800 text-slate-400 py-6 text-center text-sm">
+        <p>© 2024 TypoMaster Siswa. Dibuat untuk membantu presentasi sekolahmu lebih kece.</p>
+      </footer>
+    </div>
+  );
+};
+
+// --- Sub-Components ---
+
+const NavButton = ({ active, onClick, icon, label }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-all text-sm sm:text-base whitespace-nowrap ${
+      active ? 'bg-indigo-800 text-white shadow-inner' : 'hover:bg-indigo-500 hover:text-white'
+    }`}
+  >
+    {icon}
+    <span>{label}</span>
+  </button>
+);
+
+const Home = ({ navigate }) => (
+  <div className="flex flex-col items-center justify-center text-center py-10 space-y-8 animate-fade-in">
+    <div className="bg-indigo-100 p-6 rounded-full">
+      <Type className="w-20 h-20 text-indigo-600" />
+    </div>
+    <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+      Jangan Biarkan <span className="text-indigo-600">Font</span> Menghancurkan Nilaimu!
+    </h1>
+    <p className="text-lg text-slate-600 max-w-2xl">
+      Tahukah kamu? Presentasi yang isinya bagus bisa terlihat membosankan jika pemilihan hurufnya salah. 
+      Pelajari cara memilih tipografi yang tepat agar audiens (dan gurumu) betah melihat slide-mu.
+    </p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mt-8">
+      <FeatureCard 
+        icon={<Type className="text-blue-500" />} 
+        title="Jenis Font" 
+        desc="Kenapa Comic Sans dilarang? Kapan pakai Serif?" 
+        onClick={() => navigate('basics')}
+      />
+      <FeatureCard 
+        icon={<Layout className="text-green-500" />} 
+        title="Hierarki" 
+        desc="Agar audiens tahu mana judul dan mana isi." 
+        onClick={() => navigate('hierarchy')}
+      />
+      <FeatureCard 
+        icon={<Palette className="text-purple-500" />} 
+        title="Warna & Kontras" 
+        desc="Jangan bikin mata audiens sakit dengan warna neon." 
+        onClick={() => navigate('contrast')}
+      />
+    </div>
+    <button 
+      onClick={() => navigate('basics')}
+      className="mt-8 px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg hover:bg-indigo-700 transition shadow-lg flex items-center gap-2"
+    >
+      Mulai Belajar <ArrowRight />
+    </button>
+  </div>
+);
+
+const FeatureCard = ({ icon, title, desc, onClick }) => (
+  <div 
+    onClick={onClick}
+    className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition cursor-pointer border border-slate-100 group"
+  >
+    <div className="mb-4 bg-slate-50 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition">
+      {icon}
+    </div>
+    <h3 className="font-bold text-xl mb-2 group-hover:text-indigo-600">{title}</h3>
+    <p className="text-slate-500 text-sm">{desc}</p>
+  </div>
+);
+
+const Basics = () => {
+  const [fontType, setFontType] = useState('sans'); // 'serif', 'sans', 'display'
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <SectionHeader 
+        title="Dasar: Memilih Jenis Huruf" 
+        subtitle="Ada ribuan font, tapi hanya dua kategori besar yang perlu kamu pahami untuk presentasi."
+      />
+
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Interactive Viewer */}
+        <div className="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+          <div className="flex space-x-2 mb-6 bg-slate-100 p-1 rounded-lg inline-flex">
+            {['sans', 'serif', 'handwriting'].map((type) => (
+              <button
+                key={type}
+                onClick={() => setFontType(type)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+                  fontType === type ? 'bg-white shadow text-indigo-600' : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                {type === 'sans' ? 'Sans-Serif' : type === 'serif' ? 'Serif' : 'Dekoratif/Tulis'}
+              </button>
+            ))}
+          </div>
+
+          <div className={`transition-all duration-300 min-h-[200px] flex flex-col justify-center
+            ${fontType === 'sans' ? 'font-sans' : fontType === 'serif' ? 'font-serif' : 'font-[cursive]'}`}
+          >
+            <h2 className="text-4xl mb-4">Typography</h2>
+            <p className="text-lg leading-relaxed">
+              Ini adalah contoh teks paragraf. Perhatikan bentuk hurufnya. 
+              {fontType === 'sans' && " Bersih, modern, dan tanpa 'kaki'. Sangat mudah dibaca di layar proyektor dari jarak jauh."}
+              {fontType === 'serif' && " Memiliki 'kaki' kecil di ujung huruf. Terkesan formal, klasik, dan serius. Bagus untuk dokumen cetak, tapi kadang sulit dibaca di proyektor buram."}
+              {fontType === 'handwriting' && " Terlihat santai atau artistik. TAPI HATI-HATI! Sangat sulit dibaca jika ukurannya kecil atau teksnya banyak. Jangan pakai untuk isi presentasi!"}
+            </p>
+          </div>
+        </div>
+
+        {/* Explanation */}
+        <div className="space-y-4">
+          <div className={`p-4 rounded-xl border-l-4 ${fontType === 'sans' ? 'bg-indigo-50 border-indigo-500' : 'bg-white border-slate-200'}`}>
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <CheckCircle size={20} className="text-indigo-600" /> Sans-Serif (Rekomendasi Utama)
+            </h3>
+            <p className="text-slate-600 text-sm mt-1">Contoh: Arial, Calibri, Open Sans, Roboto.</p>
+            <p className="mt-2 text-sm">Paling aman untuk presentasi sekolah. Bentuknya sederhana sehingga tetap jelas meski proyektor di kelas agak buram.</p>
+          </div>
+
+          <div className={`p-4 rounded-xl border-l-4 ${fontType === 'serif' ? 'bg-indigo-50 border-indigo-500' : 'bg-white border-slate-200'}`}>
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <div className="text-amber-600"><Layout size={20}/></div> Serif (Gunakan Hati-hati)
+            </h3>
+            <p className="text-slate-600 text-sm mt-1">Contoh: Times New Roman, Georgia, Garamond.</p>
+            <p className="mt-2 text-sm">Gunakan hanya untuk Judul Besar agar terlihat elegan. Hindari untuk teks isi yang kecil karena "kaki-kakinya" bisa terlihat kabur.</p>
+          </div>
+
+          <div className={`p-4 rounded-xl border-l-4 ${fontType === 'handwriting' ? 'bg-red-50 border-red-500' : 'bg-white border-slate-200'}`}>
+            <h3 className="font-bold text-lg flex items-center gap-2">
+              <XCircle size={20} className="text-red-500" /> Dekoratif/Tulis Tangan (HINDARI)
+            </h3>
+            <p className="text-slate-600 text-sm mt-1">Contoh: Comic Sans, Papyrus, Lobster.</p>
+            <p className="mt-2 text-sm">Terkesan tidak profesional dan sulit dibaca. Simpan font ini untuk desain poster ulang tahun, bukan presentasi tugas sekolah.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Hierarchy = () => {
+  const [isGood, setIsGood] = useState(false);
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <SectionHeader 
+        title="Hierarki Visual: Mengarahkan Mata" 
+        subtitle="Audiens harus tahu mana yang harus dibaca duluan. Jangan biarkan mereka bingung."
+      />
+
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200">
+        <div className="bg-slate-100 p-4 flex justify-between items-center border-b">
+          <span className="font-bold text-slate-500">Simulasi Slide Presentasi</span>
+          <button 
+            onClick={() => setIsGood(!isGood)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition ${
+              isGood ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            <RefreshCw size={16} />
+            {isGood ? "Mode: Hierarki BAGUS" : "Mode: Hierarki BURUK"}
+          </button>
+        </div>
+        
+        <div className="p-8 md:p-16 flex justify-center bg-slate-50">
+          <div className="w-full max-w-2xl bg-white aspect-video shadow-2xl p-8 flex flex-col justify-center relative">
+            {/* Simulation Content */}
+            {!isGood ? (
+              <div className="space-y-4 text-center">
+                <p className="text-lg font-bold">Dampak Perubahan Iklim</p>
+                <p className="text-lg font-bold">Pemanasan global menyebabkan es di kutub mencair.</p>
+                <p className="text-lg font-bold">Permukaan air laut naik.</p>
+                <p className="text-lg font-bold">Cuaca menjadi ekstrim dan tidak menentu.</p>
+                <div className="absolute top-2 right-2 text-red-500 opacity-20 transform rotate-12 text-6xl font-black">BAD</div>
+              </div>
+            ) : (
+              <div className="text-left">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-700 mb-6">Dampak Perubahan Iklim</h1>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3 text-xl md:text-2xl text-slate-700">
+                    <span className="text-indigo-500 mt-1">•</span>
+                    <span><strong>Es Kutub Mencair:</strong> Habitat beruang kutub terancam.</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-xl md:text-2xl text-slate-700">
+                    <span className="text-indigo-500 mt-1">•</span>
+                    <span><strong>Air Laut Naik:</strong> Pulau-pulau kecil bisa tenggelam.</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-xl md:text-2xl text-slate-700">
+                    <span className="text-indigo-500 mt-1">•</span>
+                    <span><strong>Cuaca Ekstrim:</strong> Badai lebih sering terjadi.</span>
+                  </li>
+                </ul>
+                <div className="absolute top-2 right-2 text-green-500 opacity-20 transform -rotate-12 text-6xl font-black">GOOD</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="p-6 bg-slate-50 border-t grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-bold text-red-600 mb-2">Kenapa contoh awal buruk?</h4>
+            <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+              <li>Semua teks ukurannya sama (Flat).</li>
+              <li>Semua teks di-bold (Tidak ada penekanan).</li>
+              <li>Mata tidak tahu harus mulai dari mana.</li>
+              <li>Terlalu monoton.</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-green-600 mb-2">Kenapa contoh perbaikan bagus?</h4>
+            <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+              <li><strong>Ukuran:</strong> Judul jauh lebih besar (48px vs 24px).</li>
+              <li><strong>Berat (Weight):</strong> Judul tebal, isi normal.</li>
+              <li><strong>Warna:</strong> Judul diberi warna pembeda.</li>
+              <li><strong>Spasi:</strong> Jarak antar poin membuat teks bernafas.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Contrast = () => {
+  const [bgType, setBgType] = useState('dark'); // dark, light, busy, low-contrast
+  
+  const backgrounds = {
+    dark: 'bg-slate-900',
+    light: 'bg-white',
+    busy: 'bg-[url("https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop")] bg-cover',
+    low: 'bg-indigo-400'
+  };
+
+  const textColors = {
+    dark: 'text-white',
+    light: 'text-slate-900',
+    busy: 'text-white', // This will be hard to read without overlay
+    low: 'text-indigo-600' // Bad contrast
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      <SectionHeader 
+        title="Warna & Kontras" 
+        subtitle="Slide yang cantik tidak ada gunanya kalau tidak bisa dibaca."
+      />
+
+      <div className="grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-4">
+          <div className={`h-80 w-full rounded-2xl shadow-xl flex items-center justify-center p-8 transition-all duration-500 relative overflow-hidden ${backgrounds[bgType]}`}>
+            {/* Overlay for busy background demo if needed, currently disabled to show the mistake */}
+             
+            <div className="relative z-10 text-center">
+              <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${textColors[bgType]}`}>
+                Judul Presentasi
+              </h2>
+              <p className={`text-xl md:text-2xl ${textColors[bgType]}`}>
+                Ini adalah teks isi slide kamu. Apakah mudah dibaca oleh temanmu yang duduk paling belakang?
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-2 flex-wrap">
+             <button onClick={() => setBgType('light')} className={`px-4 py-2 rounded-full text-sm font-bold border ${bgType === 'light' ? 'bg-slate-200 border-slate-400' : 'bg-white'}`}>Background Putih</button>
+             <button onClick={() => setBgType('dark')} className={`px-4 py-2 rounded-full text-sm font-bold border ${bgType === 'dark' ? 'bg-slate-800 text-white' : 'bg-white'}`}>Background Gelap</button>
+             <button onClick={() => setBgType('low')} className={`px-4 py-2 rounded-full text-sm font-bold border ${bgType === 'low' ? 'bg-indigo-200 border-indigo-400' : 'bg-white'}`}>Kontras Rendah (Buruk)</button>
+             <button onClick={() => setBgType('busy')} className={`px-4 py-2 rounded-full text-sm font-bold border ${bgType === 'busy' ? 'bg-purple-100 border-purple-300' : 'bg-white'}`}>Gambar Ramai (Buruk)</button>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl shadow border border-slate-200 h-fit">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2"><Eye size={20}/> Analisa Keterbacaan</h3>
+          
+          {bgType === 'light' && (
+            <div className="text-green-600 bg-green-50 p-4 rounded-lg">
+              <p className="font-bold flex items-center gap-2"><CheckCircle size={16}/> Sangat Bagus</p>
+              <p className="text-sm mt-1">Teks gelap di atas putih adalah kombinasi paling aman dan profesional.</p>
+            </div>
+          )}
+          {bgType === 'dark' && (
+            <div className="text-green-600 bg-green-50 p-4 rounded-lg">
+              <p className="font-bold flex items-center gap-2"><CheckCircle size={16}/> Sangat Bagus (Mode Gelap)</p>
+              <p className="text-sm mt-1">Teks putih di atas gelap sangat nyaman di mata, terutama di ruangan yang agak gelap.</p>
+            </div>
+          )}
+          {bgType === 'low' && (
+            <div className="text-red-600 bg-red-50 p-4 rounded-lg">
+              <p className="font-bold flex items-center gap-2"><XCircle size={16}/> Sangat Buruk</p>
+              <p className="text-sm mt-1">Warna teks dan background terlalu mirip. Mata harus bekerja keras untuk membacanya. Hindari!</p>
+            </div>
+          )}
+          {bgType === 'busy' && (
+            <div className="text-amber-600 bg-amber-50 p-4 rounded-lg">
+              <p className="font-bold flex items-center gap-2"><XCircle size={16}/> Kurang Jelas</p>
+              <p className="text-sm mt-1">Jangan menaruh teks langsung di atas gambar yang ramai. <br/><span className="font-bold">Tips:</span> Gunakan kotak (shape) semi-transparan di belakang teks atau gelapkan gambarnya.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Playground = () => {
+  const [title, setTitle] = useState("Revolusi Industri 4.0");
+  const [body, setBody] = useState("Revolusi industri 4.0 merupakan transformasi komprehensif dari keseluruhan aspek produksi di industri melalui penggabungan teknologi digital dan internet dengan industri konvensional.");
+  const [slideBg, setSlideBg] = useState("bg-white");
+  const [textColor, setTextColor] = useState("text-slate-900");
+  const [fontFamily, setFontFamily] = useState("font-sans");
+  const [alignment, setAlignment] = useState("text-left");
+
+  return (
+    <div className="animate-fade-in grid lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow border border-slate-200 space-y-6 h-fit">
+        <div>
+          <h3 className="font-bold text-slate-700 mb-2">1. Edit Konten</h3>
+          <input 
+            type="text" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-2 border rounded mb-2 text-sm"
+            placeholder="Judul Slide"
+          />
+          <textarea 
+            value={body} 
+            onChange={(e) => setBody(e.target.value)}
+            className="w-full p-2 border rounded text-sm h-24"
+            placeholder="Isi Slide"
+          />
+        </div>
+
+        <div>
+          <h3 className="font-bold text-slate-700 mb-2">2. Gaya Huruf</h3>
+          <div className="flex gap-2 mb-2">
+            <button onClick={() => setFontFamily('font-sans')} className={`flex-1 py-1 px-2 rounded text-sm border ${fontFamily === 'font-sans' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Sans</button>
+            <button onClick={() => setFontFamily('font-serif')} className={`flex-1 py-1 px-2 rounded text-sm border ${fontFamily === 'font-serif' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Serif</button>
+            <button onClick={() => setFontFamily('font-mono')} className={`flex-1 py-1 px-2 rounded text-sm border ${fontFamily === 'font-mono' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Mono</button>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setAlignment('text-left')} className={`flex-1 py-1 px-2 rounded text-sm border ${alignment === 'text-left' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Kiri</button>
+            <button onClick={() => setAlignment('text-center')} className={`flex-1 py-1 px-2 rounded text-sm border ${alignment === 'text-center' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Tengah</button>
+            <button onClick={() => setAlignment('text-right')} className={`flex-1 py-1 px-2 rounded text-sm border ${alignment === 'text-right' ? 'bg-indigo-100 border-indigo-500' : ''}`}>Kanan</button>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-bold text-slate-700 mb-2">3. Tema Warna</h3>
+          <div className="grid grid-cols-2 gap-2">
+            <button onClick={() => { setSlideBg('bg-white'); setTextColor('text-slate-900'); }} className="p-2 border rounded text-xs text-center hover:bg-slate-50">Putih (Standar)</button>
+            <button onClick={() => { setSlideBg('bg-slate-900'); setTextColor('text-white'); }} className="p-2 border rounded text-xs text-center bg-slate-800 text-white hover:bg-slate-700">Gelap (Modern)</button>
+            <button onClick={() => { setSlideBg('bg-indigo-600'); setTextColor('text-white'); }} className="p-2 border rounded text-xs text-center bg-indigo-600 text-white hover:bg-indigo-700">Biru (Bold)</button>
+            <button onClick={() => { setSlideBg('bg-yellow-400'); setTextColor('text-slate-900'); }} className="p-2 border rounded text-xs text-center bg-yellow-400 text-slate-900 hover:bg-yellow-500">Kuning (Pop)</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="lg:col-span-2">
+        <div className="bg-slate-200 p-4 md:p-8 rounded-xl flex items-center justify-center min-h-[400px]">
+          <div className={`w-full aspect-video shadow-2xl p-8 md:p-12 flex flex-col justify-center transition-colors duration-300 ${slideBg} ${textColor} ${fontFamily} ${alignment}`}>
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 leading-tight">{title}</h1>
+            <p className="text-lg md:text-2xl opacity-90 leading-relaxed">{body}</p>
+          </div>
+        </div>
+        <p className="text-center text-slate-500 mt-4 text-sm">
+          Cobalah bereksperimen! Apakah font Serif cocok dengan background kuning? Apakah teks rata tengah mudah dibaca jika kalimatnya panjang?
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const SectionHeader = ({ title, subtitle }) => (
+  <div className="mb-6">
+    <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
+    <p className="text-slate-500 mt-2 text-lg">{subtitle}</p>
+    <div className="h-1 w-20 bg-indigo-500 mt-4 rounded-full"></div>
+  </div>
+);
+
+export default App;
